@@ -5,15 +5,29 @@ class ModelManager {
     this.activeDownloads = new Map(); // Track active downloads
     this.setupUI();
     this.loadModels();
+
+    // Setup dropdown functionality
+    const dropdown = document.querySelector('.dropdown');
+    const dropdownBtn = document.getElementById('modelDropdownBtn');
+    
+    dropdownBtn.onclick = (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle('active');
+    };
+
+    document.addEventListener('click', () => {
+      dropdown.classList.remove('active');
+    });
+
+    // Add Model button opens the model manager
+    document.getElementById('addModelBtn').onclick = (e) => {
+      e.stopPropagation();
+      dropdown.classList.remove('active');
+      document.getElementById('modelManager').style.display = 'block';
+    };
   }
 
   setupUI() {
-    // Create model manager button
-    const modelBtn = document.createElement('button');
-    modelBtn.id = 'modelManagerBtn';
-    modelBtn.innerHTML = '⚙️ Models';
-    document.querySelector('#input-area').prepend(modelBtn);
-
     // Create model manager modal
     const modal = document.createElement('div');
     modal.id = 'modelManager';
@@ -34,39 +48,49 @@ class ModelManager {
     `;
     document.body.appendChild(modal);
 
-    // Event listeners
-    modelBtn.onclick = () => modal.style.display = 'block';
+    // Event listeners for modal
     modal.querySelector('.close-btn').onclick = () => modal.style.display = 'none';
     modal.onclick = (e) => {
       if (e.target === modal) modal.style.display = 'none';
     };
 
-    const addModelBtn = document.getElementById('addModelBtn');
-    const newModelInput = document.getElementById('newModelInput');
-    
-    addModelBtn.onclick = () => {
-      const modelName = newModelInput.value.trim();
+    const addModelInput = document.getElementById('newModelInput');
+    modal.querySelector('#addModelBtn').onclick = () => {
+      const modelName = addModelInput.value.trim();
       if (modelName) {
         this.pullModel(modelName);
-        newModelInput.value = '';
       }
     };
     
-    newModelInput.onkeypress = (e) => {
-      if (e.key === 'Enter') addModelBtn.click();
+    addModelInput.onkeypress = (e) => {
+      if (e.key === 'Enter') modal.querySelector('#addModelBtn').click();
     };
+  }
+
+  updateModelList() {
+    const modelList = document.getElementById('modelList');
+    modelList.innerHTML = '';
+
+    this.models.forEach((modelInfo, modelName) => {
+      const option = document.createElement('div');
+      option.className = `model-option ${modelName === this.currentModel ? 'active' : ''}`;
+      option.textContent = modelName;
+      option.onclick = () => this.useModel(modelName);
+      modelList.appendChild(option);
+    });
   }
 
   async loadModels() {
     try {
       const response = await fetch('/api/models');
       const data = await response.json();
-      const modelList = document.querySelector('.model-list');
-      modelList.innerHTML = '';
-
+      
+      this.models.clear();
       for (const model of data.models) {
         await this.addModelToList(model.name);
       }
+      
+      this.updateModelList();
     } catch (error) {
       console.error('Error loading models:', error);
     }
@@ -76,31 +100,6 @@ class ModelManager {
     try {
       const response = await fetch(`/api/models/${modelName}`);
       const modelInfo = await response.json();
-      
-      const modelDiv = document.createElement('div');
-      modelDiv.className = 'model-item';
-      
-      const size = modelInfo.size ? (modelInfo.size / (1024 * 1024 * 1024)).toFixed(1) + 'GB' : 'N/A';
-      const contextWindow = modelInfo.details?.parameter_size || 'N/A';
-      
-      modelDiv.innerHTML = `
-        <div class="model-info">
-          <span class="model-name">${modelName}</span>
-          <span class="model-details">
-            Size: ${size} | Parameters: ${contextWindow}
-          </span>
-        </div>
-        <div class="model-actions">
-          <button class="use-model-btn ${this.currentModel === modelName ? 'active' : ''}" 
-                  data-model="${modelName}">Use</button>
-          <button class="delete-model-btn" data-model="${modelName}">Delete</button>
-        </div>
-      `;
-
-      modelDiv.querySelector('.use-model-btn').onclick = () => this.useModel(modelName);
-      modelDiv.querySelector('.delete-model-btn').onclick = () => this.deleteModel(modelName);
-
-      document.querySelector('.model-list').appendChild(modelDiv);
       this.models.set(modelName, modelInfo);
     } catch (error) {
       console.error(`Error adding model ${modelName} to list:`, error);
@@ -121,7 +120,13 @@ class ModelManager {
           <span class="model-name">${modelName}</span>
           <button class="cancel-download" data-model="${modelName}">×</button>
         </div>
-        <div class="progress-text"></div>
+        <div class="progress-bar-container">
+          <div class="progress-bar"></div>
+        </div>
+        <div class="progress-stats">
+          <span class="progress-text"></span>
+          <span class="progress-percentage">0%</span>
+        </div>
       `;
       progressDiv.appendChild(modelProgress);
 
@@ -136,13 +141,53 @@ class ModelManager {
       };
     }
     
-    return modelProgress.querySelector('.progress-text');
+    return {
+      textElement: modelProgress.querySelector('.progress-text'),
+      barElement: modelProgress.querySelector('.progress-bar'),
+      percentageElement: modelProgress.querySelector('.progress-percentage'),
+      container: modelProgress
+    };
+  }
+
+  updateProgress(progressElements, text) {
+    // Try to extract progress information from the text
+    const progressMatch = text.match(/(\d+(\.\d+)?)\s*MB\s*\/\s*(\d+(\.\d+)?)\s*GB/);
+    const progressPercentMatch = text.match(/(\d+)%/);
+    
+    if (progressMatch) {
+      const [, downloaded, , total] = progressMatch;
+      const percentage = (parseFloat(downloaded) / (parseFloat(total) * 1024)) * 100;
+      progressElements.barElement.style.width = `${percentage}%`;
+      progressElements.percentageElement.textContent = `${Math.round(percentage)}%`;
+    } else if (progressPercentMatch) {
+      const percentage = parseInt(progressPercentMatch[1]);
+      progressElements.barElement.style.width = `${percentage}%`;
+      progressElements.percentageElement.textContent = `${percentage}%`;
+    }
+
+    // Clean up and format the progress text
+    let cleanText = text
+      .replace(/\[\?2026h\[\?25l\[A\[1G/, '') // Remove control characters
+      .replace(/\[\d+G/, '')
+      .trim();
+    
+    if (cleanText.includes('pulling manifest')) {
+      cleanText = 'Pulling manifest...';
+      progressElements.barElement.classList.add('indeterminate');
+    } else if (cleanText.includes('verifying')) {
+      cleanText = 'Verifying download...';
+      progressElements.barElement.classList.add('indeterminate');
+    } else {
+      progressElements.barElement.classList.remove('indeterminate');
+    }
+
+    progressElements.textElement.textContent = cleanText;
   }
 
   async pullModel(modelName) {
     if (!modelName || this.activeDownloads.has(modelName)) return;
 
-    const progressElement = this.getProgressElement(modelName);
+    const progressElements = this.getProgressElement(modelName);
     const controller = new AbortController();
     this.activeDownloads.set(modelName, controller);
     
@@ -165,11 +210,11 @@ class ModelManager {
         for (const line of lines) {
           if (line.startsWith('data: ')) {
             const event = JSON.parse(line.slice(6));
-            progressElement.textContent = event.data;
+            this.updateProgress(progressElements, event.data);
             
             if (event.type === 'complete') {
               await this.loadModels();
-              progressElement.parentElement.remove();
+              progressElements.container.remove();
               this.activeDownloads.delete(modelName);
             }
           }
@@ -177,10 +222,10 @@ class ModelManager {
       }
     } catch (error) {
       if (error.name === 'AbortError') {
-        progressElement.textContent = 'Download cancelled';
+        progressElements.textElement.textContent = 'Download cancelled';
       } else {
         console.error('Error pulling model:', error);
-        progressElement.textContent = `Error: ${error.message}`;
+        progressElements.textElement.textContent = `Error: ${error.message}`;
       }
       this.activeDownloads.delete(modelName);
     }
@@ -199,11 +244,10 @@ class ModelManager {
 
   useModel(modelName) {
     this.currentModel = modelName;
-    document.querySelectorAll('.use-model-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.model === modelName);
-    });
-    // Update the model name in the chat interface
     window.currentModel = modelName;
+    document.getElementById('currentModelDisplay').textContent = modelName;
+    this.updateModelList();
+    document.querySelector('.dropdown').classList.remove('active');
   }
 }
 

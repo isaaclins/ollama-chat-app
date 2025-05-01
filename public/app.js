@@ -156,13 +156,15 @@ async function sendMessage() {
     
     setLoading(true, true); // Show cancel button while receiving response
     
+    let responseText = '';
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       
       const text = decoder.decode(value, { stream: true });
       if (text) {
-        botTextSpan.textContent += text;
+        responseText += text;
+        botTextSpan.textContent = responseText;
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
     }

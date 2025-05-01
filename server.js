@@ -98,25 +98,36 @@ app.delete('/api/models/:name', async (req, res) => {
 // Custom proxy middleware for Ollama chat
 app.post('/api/chat', async (req, res) => {
   try {
+    if (!req.body.model) {
+      return res.status(400).json({ error: 'Model name is required' });
+    }
+
     const ollamaResponse = await fetch(`${OLLAMA_API}/api/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: req.body.model || 'llava-llama3',
+        model: req.body.model,
         messages: req.body.messages,
-        stream: true
+        stream: true,
+        options: {
+          temperature: 0.7,
+          top_k: 40,
+          top_p: 0.9,
+        }
       }),
     });
 
     if (!ollamaResponse.ok) {
-      throw new Error(`Ollama API error: ${ollamaResponse.statusText}`);
+      const errorText = await ollamaResponse.text();
+      throw new Error(`Ollama API error: ${ollamaResponse.statusText}. ${errorText}`);
     }
 
     // Set headers for streaming response
     res.setHeader('Content-Type', 'text/plain');
-    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
 
     // Stream the response line by line
     const responseStream = ollamaResponse.body;

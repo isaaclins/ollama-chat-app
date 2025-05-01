@@ -386,22 +386,24 @@ body {
 
 #pullProgress {
   margin-top: 1rem;
-  max-height: 200px;
+  max-height: 300px;
   overflow-y: auto;
+  padding-right: 0.5rem;
 }
 
 .model-progress {
   background: #f3f4f6;
   border-radius: 0.5rem;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #e5e7eb;
 }
 
 .progress-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .progress-header .model-name {
@@ -417,14 +419,222 @@ body {
   font-size: 1.2rem;
   padding: 0 0.5rem;
   line-height: 1;
+  opacity: 0.7;
+  transition: all 0.2s;
 }
 
 .cancel-download:hover {
   color: #ef4444;
+  opacity: 1;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  width: 0;
+  height: 100%;
+  background: var(--primary-color);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-bar.indeterminate {
+  width: 50%;
+  animation: indeterminate 1.5s infinite linear;
+  background: linear-gradient(90deg, 
+    var(--primary-color) 0%, 
+    #93c5fd 50%, 
+    var(--primary-color) 100%
+  );
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
 }
 
 .progress-text {
+  margin-right: 1rem;
+  flex: 1;
+}
+
+.progress-percentage {
+  font-weight: 500;
+  min-width: 3rem;
+  text-align: right;
+}
+
+#pullProgress::-webkit-scrollbar {
+  width: 6px;
+}
+
+#pullProgress::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+#pullProgress::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+#pullProgress::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+#chat-header {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.current-model {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.current-model .label {
+  color: var(--text-secondary);
+}
+
+#currentModelDisplay {
+  color: var(--primary-color);
+  font-weight: 500;
+  background: #e0e7ff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+#model-selector {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   font-size: 0.875rem;
   color: var(--text-secondary);
-  word-break: break-word;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  background: #e0e7ff;
+  border: none;
+  border-radius: 1rem;
+  color: var(--primary-color);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.dropdown-btn:hover {
+  background: #c7d2fe;
+}
+
+.dropdown-arrow {
+  transition: transform 0.2s;
+}
+
+.dropdown.active .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  min-width: 200px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown.active .dropdown-content {
+  display: block;
+}
+
+#modelList {
+  padding: 0.5rem 0;
+}
+
+.model-option {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-primary);
+  transition: background-color 0.2s;
+}
+
+.model-option:hover {
+  background: #f3f4f6;
+}
+
+.model-option.active {
+  background: #e0e7ff;
+  color: var(--primary-color);
+}
+
+.add-model-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  background: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-model-btn:hover {
+  background: #f3f4f6;
+}
+
+.add-model-btn svg {
+  stroke: currentColor;
 }

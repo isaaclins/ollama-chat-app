@@ -14,6 +14,26 @@
 
 <body>
     <div id="chat-container">
+        <div id="model-selector">
+            <span>Current Model:</span>
+            <div class="dropdown">
+                <button id="modelDropdownBtn" class="dropdown-btn">
+                    <span id="currentModelDisplay">llava-llama3</span>
+                    <svg class="dropdown-arrow" width="10" height="6" viewBox="0 0 10 6">
+                        <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="2" fill="none"/>
+                    </svg>
+                </button>
+                <div class="dropdown-content">
+                    <div id="modelList"></div>
+                    <button id="addModelBtn" class="add-model-btn">
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M8 1V15M1 8H15" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Add Model
+                    </button>
+                </div>
+            </div>
+        </div>
         <div id="messages"></div>
         <div id="input-area">
             <label for="imageInput" id="imageInputLabel">

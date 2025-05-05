@@ -1,0 +1,10 @@
+INFO 2025-05-01 22:49:47,315 Auth info was exported to ./.tmp/auth_info.json api/debug/debug.cpp:17 isaaclins@unknown-host
+INFO 2025-05-01 22:51:21,069 Auth info was exported to ./.tmp/auth_info.json api/debug/debug.cpp:17 isaaclins@unknown-host
+INFO 2025-05-01 22:52:37,410 Auth info was exported to ./.tmp/auth_info.json api/debug/debug.cpp:17 isaaclins@unknown-host
+INFO 2025-05-01 22:53:06,942 Auth info was exported to ./.tmp/auth_info.json api/debug/debug.cpp:17 isaaclins@unknown-host
+INFO 2025-05-01 22:54:03,780 Auth info was exported to ./.tmp/auth_info.json api/debug/debug.cpp:17 isaaclins@unknown-host
+ERROR 2025-05-01 22:54:04,038 NE_RS_UNBLDRE: Unable to load application resource file /index.html api/debug/debug.cpp:20 isaaclins@unknown-host
+INFO 2025-05-01 22:56:09,336 Auth info was exported to ./.tmp/auth_info.json api/debug/debug.cpp:17 isaaclins@unknown-host
+ERROR 2025-05-01 22:56:09,600 NE_RS_UNBLDRE: Unable to load application resource file /index.html api/debug/debug.cpp:20 isaaclins@unknown-host
+INFO 2025-05-02 15:07:20,253 Auth info was exported to ./.tmp/auth_info.json api/debug/debug.cpp:17 isaaclins@unknown-host
+ERROR 2025-05-02 15:07:20,626 NE_RS_UNBLDRE: Unable to load application resource file /index.html api/debug/debug.cpp:20 isaaclins@unknown-host

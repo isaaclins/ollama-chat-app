@@ -5,6 +5,100 @@ const imageInput = document.getElementById('imageInput');
 
 let currentController = null; // For cancelling requests
 
+// === Chat Session Management ===
+
+const chatList = document.getElementById('chatList');
+const newChatBtn = document.getElementById('newChatBtn');
+
+let chatSessions = JSON.parse(sessionStorage.getItem('chatSessions') || '[]');
+let activeChatId = sessionStorage.getItem('activeChatId') || null;
+
+function saveSessions() {
+  sessionStorage.setItem('chatSessions', JSON.stringify(chatSessions));
+  sessionStorage.setItem('activeChatId', activeChatId);
+}
+
+function getCurrentSession() {
+  return chatSessions.find(s => s.id === activeChatId);
+}
+
+function renderChatList() {
+  if (!chatList) return;
+  chatList.innerHTML = '';
+  chatSessions.forEach(session => {
+    const li = document.createElement('li');
+    li.textContent = session.name;
+    if (session.id === activeChatId) li.classList.add('active');
+
+    // Delete button
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '×';
+    delBtn.className = 'delete-chat';
+    delBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (confirm(`Delete \"${session.name}\"?`)) {
+        chatSessions = chatSessions.filter(s => s.id !== session.id);
+        if (activeChatId === session.id) {
+          activeChatId = chatSessions[0]?.id || null;
+        }
+        saveSessions();
+        renderChatList();
+        renderChatSession();
+      }
+    };
+
+    li.appendChild(delBtn);
+    li.onclick = () => {
+      activeChatId = session.id;
+      saveSessions();
+      renderChatList();
+      renderChatSession();
+    };
+    chatList.appendChild(li);
+  });
+}
+
+function renderChatSession() {
+  if (!messagesDiv) return;
+  messagesDiv.innerHTML = '';
+  const session = getCurrentSession();
+  if (!session) return;
+  session.messages.forEach(m => {
+    addMessage(m.content, m.role === 'user' ? 'user' : 'bot', m.imageData);
+  });
+}
+
+function createNewChat() {
+  const id = Date.now().toString();
+  const name = `Chat ${chatSessions.length + 1}`;
+  chatSessions.push({ id, name, messages: [] });
+  activeChatId = id;
+  saveSessions();
+  renderChatList();
+  renderChatSession();
+}
+
+// Initialise sessions
+if (!chatSessions.length) {
+  createNewChat();
+} else {
+  if (!activeChatId || !chatSessions.find(s => s.id === activeChatId)) {
+    activeChatId = chatSessions[0].id;
+  }
+  renderChatList();
+  renderChatSession();
+}
+
+if (newChatBtn) newChatBtn.addEventListener('click', createNewChat);
+
+// Move model selector into sidebar if present
+const sidebar = document.getElementById('sidebar');
+const modelSelector = document.getElementById('model-selector');
+if (sidebar && modelSelector) {
+  sidebar.insertBefore(modelSelector, sidebar.firstChild);
+  modelSelector.classList.add('sidebar-section');
+}
+
 function addMessage(content, className, imageData = null) {
   const div = document.createElement('div');
   div.classList.add('message', className);
@@ -129,6 +223,13 @@ async function sendMessage() {
     // Add user message with image if present
     addMessage(prompt, 'user', imageData);
     
+    // Persist user message in current session
+    const currentSession = getCurrentSession();
+    if (currentSession) {
+      currentSession.messages.push({ role: 'user', content: prompt, imageData });
+      saveSessions();
+    }
+    
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -167,6 +268,12 @@ async function sendMessage() {
         botTextSpan.textContent = responseText;
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
+    }
+
+    // After streaming completes, persist bot response
+    if (currentSession) {
+      currentSession.messages.push({ role: 'bot', content: responseText });
+      saveSessions();
     }
   } catch (error) {
     if (error.name === 'AbortError') {

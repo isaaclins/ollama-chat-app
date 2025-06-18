@@ -13,6 +13,18 @@
 </head>
 
 <body>
+    <!-- Sidebar navigation -->
+    <div id="sidebar">
+        <!-- The model-selector element will be moved here dynamically via JS -->
+        <div id="chat-sessions" class="sidebar-section">
+            <div class="sessions-header">
+                <span>Chats</span>
+                <button id="newChatBtn">New Chat</button>
+            </div>
+            <ul id="chatList"></ul>
+        </div>
+    </div>
+    <!-- Main chat container -->
     <div id="chat-container">
         <div id="model-selector">
             <span>Current Model:</span>

@@ -73,6 +73,36 @@ body {
   border-top-left-radius: 0.25rem;
 }
 
+/* internal reasoning tag */
+.think {
+  color: var(--text-secondary);
+  font-style: italic;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+body.hide-think .think {
+  display: none;
+}
+
+/* toggle switch container */
+.toggle-container {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.toggle-reason {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.toggle-reason input {
+  accent-color: var(--primary-color);
+}
+
 #input-area {
   display: flex;
   gap: 0.5rem;

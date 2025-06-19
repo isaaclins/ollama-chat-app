@@ -99,6 +99,27 @@ if (sidebar && modelSelector) {
   modelSelector.classList.add('sidebar-section');
 }
 
+// === Reasoning visibility toggle ===
+
+const reasonToggle = document.getElementById('reasonToggle');
+const BODY = document.body;
+
+function applyReasoningPref() {
+  const show = sessionStorage.getItem('showReasoning') === 'true';
+  if (reasonToggle) reasonToggle.checked = show;
+  BODY.classList.toggle('hide-think', !show);
+}
+
+applyReasoningPref();
+
+if (reasonToggle) {
+  reasonToggle.addEventListener('change', () => {
+    const show = reasonToggle.checked;
+    sessionStorage.setItem('showReasoning', show);
+    BODY.classList.toggle('hide-think', !show);
+  });
+}
+
 function addMessage(content, className, imageData = null) {
   const div = document.createElement('div');
   div.classList.add('message', className);
@@ -110,10 +131,14 @@ function addMessage(content, className, imageData = null) {
     div.appendChild(img);
   }
 
-  if (content) {
+  if (content !== undefined && content !== null) {
     const span = document.createElement('span');
     span.classList.add('text');
-    span.textContent = content;
+    if (className === 'bot') {
+      span.innerHTML = formatMessage(content);
+    } else {
+      span.textContent = content;
+    }
     div.appendChild(span);
   }
 
@@ -275,6 +300,9 @@ async function sendMessage() {
       currentSession.messages.push({ role: 'bot', content: responseText });
       saveSessions();
     }
+
+    // Replace plain text with formatted HTML
+    botTextSpan.innerHTML = formatMessage(responseText);
   } catch (error) {
     if (error.name === 'AbortError') {
       addMessage('Request cancelled', 'bot');
@@ -336,3 +364,27 @@ promptInput.addEventListener('keypress', (e) => {
     sendMessage();
   }
 });
+
+// === Markdown & "think" formatter ===
+
+function formatMessage(text) {
+  if (!text) return '';
+  // Escape HTML special chars first
+  text = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Restore <think> blocks and wrap with span.think (case-insensitive)
+  text = text.replace(/&lt;think&gt;([\s\S]*?)&lt;\/think&gt;/gi, (_m, p1) => `<span class="think">${p1.trim()}</span>`);
+
+  // Bold **text**
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Italic *text*  (single asterisks that are not bold)
+  text = text.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<em>$1</em>');
+
+  // Newlines → <br>
+  text = text.replace(/\n/g, '<br>');
+
+  return text;
+}

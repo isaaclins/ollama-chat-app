@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 # Function to check if Ollama is responding
 check_ollama() {
@@ -8,6 +9,9 @@ check_ollama() {
 
 # Start Ollama with llava-llama3 in the background
 ollama run llava-llama3 &
+OLLAMA_PID=$!
+# Ensure background process is terminated on exit
+trap 'kill $OLLAMA_PID' EXIT
 
 # Wait for Ollama to be responsive
 echo "Waiting for Ollama to initialize..."
@@ -18,6 +22,3 @@ echo "Ollama is ready!"
 
 # Start the Node.js server
 npm start
-
-# When the script is interrupted, kill the background Ollama process
-trap 'kill $(jobs -p)' EXIT

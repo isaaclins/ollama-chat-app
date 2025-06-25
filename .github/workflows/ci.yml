@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Prettier Check
+        run: npm run lint
+      - name: Start app (background)
+        run: npm start &
+      - name: Wait for server
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3000 >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Server did not start" >&2
+          exit 1 

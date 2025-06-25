@@ -1,5 +1,8 @@
 # Ollama Chat App
 
+[![CI](https://github.com/isaaclins/ollama-chat-app/actions/workflows/ci.yml/badge.svg)](https://github.com/isaaclins/ollama-chat-app/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A lightweight local web interface for chatting with Large Language Models (LLMs) that run **entirely on your machine** via [Ollama](https://ollama.com/). The default model is the multi-modal `llava-llama3`, but you can pull and switch to any other model exposed by Ollama.
 
 ## ✨ Features

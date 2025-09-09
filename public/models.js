@@ -9,7 +9,7 @@ class ModelManager {
     // Setup dropdown functionality
     const dropdown = document.querySelector('.dropdown');
     const dropdownBtn = document.getElementById('modelDropdownBtn');
-    
+
     dropdownBtn.onclick = (e) => {
       e.stopPropagation();
       dropdown.classList.toggle('active');
@@ -49,7 +49,7 @@ class ModelManager {
     document.body.appendChild(modal);
 
     // Event listeners for modal
-    modal.querySelector('.close-btn').onclick = () => modal.style.display = 'none';
+    modal.querySelector('.close-btn').onclick = () => (modal.style.display = 'none');
     modal.onclick = (e) => {
       if (e.target === modal) modal.style.display = 'none';
     };
@@ -61,7 +61,7 @@ class ModelManager {
         this.pullModel(modelName);
       }
     };
-    
+
     addModelInput.onkeypress = (e) => {
       if (e.key === 'Enter') modal.querySelector('#addModelBtn').click();
     };
@@ -84,12 +84,12 @@ class ModelManager {
     try {
       const response = await fetch('/api/models');
       const data = await response.json();
-      
+
       this.models.clear();
       for (const model of data.models) {
         await this.addModelToList(model.name);
       }
-      
+
       this.updateModelList();
     } catch (error) {
       console.error('Error loading models:', error);
@@ -110,7 +110,7 @@ class ModelManager {
   getProgressElement(modelName) {
     const progressDiv = document.getElementById('pullProgress');
     let modelProgress = progressDiv.querySelector(`[data-model="${modelName}"]`);
-    
+
     if (!modelProgress) {
       modelProgress = document.createElement('div');
       modelProgress.className = 'model-progress';
@@ -140,12 +140,12 @@ class ModelManager {
         }
       };
     }
-    
+
     return {
       textElement: modelProgress.querySelector('.progress-text'),
       barElement: modelProgress.querySelector('.progress-bar'),
       percentageElement: modelProgress.querySelector('.progress-percentage'),
-      container: modelProgress
+      container: modelProgress,
     };
   }
 
@@ -153,7 +153,7 @@ class ModelManager {
     // Try to extract progress information from the text
     const progressMatch = text.match(/(\d+(\.\d+)?)\s*MB\s*\/\s*(\d+(\.\d+)?)\s*GB/);
     const progressPercentMatch = text.match(/(\d+)%/);
-    
+
     if (progressMatch) {
       const [, downloaded, , total] = progressMatch;
       const percentage = (parseFloat(downloaded) / (parseFloat(total) * 1024)) * 100;
@@ -170,7 +170,7 @@ class ModelManager {
       .replace(/\[\?2026h\[\?25l\[A\[1G/, '') // Remove control characters
       .replace(/\[\d+G/, '')
       .trim();
-    
+
     if (cleanText.includes('pulling manifest')) {
       cleanText = 'Pulling manifest...';
       progressElements.barElement.classList.add('indeterminate');
@@ -190,13 +190,13 @@ class ModelManager {
     const progressElements = this.getProgressElement(modelName);
     const controller = new AbortController();
     this.activeDownloads.set(modelName, controller);
-    
+
     try {
       const response = await fetch('/api/models/pull', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ modelName }),
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       const reader = response.body.getReader();
@@ -211,7 +211,7 @@ class ModelManager {
           if (line.startsWith('data: ')) {
             const event = JSON.parse(line.slice(6));
             this.updateProgress(progressElements, event.data);
-            
+
             if (event.type === 'complete') {
               await this.loadModels();
               progressElements.container.remove();
@@ -233,7 +233,7 @@ class ModelManager {
 
   async deleteModel(modelName) {
     if (!confirm(`Are you sure you want to delete ${modelName}?`)) return;
-    
+
     try {
       await fetch(`/api/models/${modelName}`, { method: 'DELETE' });
       await this.loadModels();
@@ -252,4 +252,4 @@ class ModelManager {
 }
 
 // Initialize the model manager
-const modelManager = new ModelManager(); 
+const modelManager = new ModelManager();

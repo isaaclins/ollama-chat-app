@@ -39,4 +39,4 @@ If you discover a security vulnerability, **please do not open an issue**. Inste
 
 ## 🤝 Attribution
 
-Adapted from the excellent [Contributor Covenant](https://www.contributor-covenant.org/) guidelines. 
+Adapted from the excellent [Contributor Covenant](https://www.contributor-covenant.org/) guidelines.

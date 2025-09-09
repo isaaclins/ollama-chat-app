@@ -1,72 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Chat with Ollama's llava-llama3 model" />
     <link rel="stylesheet" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <title>Ollama Chat</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- Sidebar navigation -->
     <div id="sidebar">
-        <!-- The model-selector element will be moved here dynamically via JS -->
-        <div id="chat-sessions" class="sidebar-section">
-            <div class="sessions-header">
-                <span>Chats</span>
-                <button id="newChatBtn">New Chat</button>
-            </div>
-            <ul id="chatList"></ul>
+      <!-- The model-selector element will be moved here dynamically via JS -->
+      <div id="chat-sessions" class="sidebar-section">
+        <div class="sessions-header">
+          <span>Chats</span>
+          <button id="newChatBtn">New Chat</button>
         </div>
-        <!-- Reasoning visibility toggle -->
-        <div class="toggle-container">
-            <label class="toggle-reason">
-                <input type="checkbox" id="reasonToggle" />
-                Show thinking
-            </label>
-        </div>
+        <ul id="chatList"></ul>
+      </div>
+      <!-- Reasoning visibility toggle -->
+      <div class="toggle-container">
+        <label class="toggle-reason">
+          <input type="checkbox" id="reasonToggle" />
+          Show thinking
+        </label>
+      </div>
     </div>
     <!-- Main chat container -->
     <div id="chat-container">
-        <div id="model-selector">
-            <span>Current Model:</span>
-            <div class="dropdown">
-                <button id="modelDropdownBtn" class="dropdown-btn">
-                    <span id="currentModelDisplay">llava-llama3</span>
-                    <svg class="dropdown-arrow" width="10" height="6" viewBox="0 0 10 6">
-                        <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="2" fill="none"/>
-                    </svg>
-                </button>
-                <div class="dropdown-content">
-                    <div id="modelList"></div>
-                    <button id="addModelBtn" class="add-model-btn">
-                        <svg width="16" height="16" viewBox="0 0 16 16">
-                            <path d="M8 1V15M1 8H15" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                        Add Model
-                    </button>
-                </div>
-            </div>
+      <div id="model-selector">
+        <span>Current Model:</span>
+        <div class="dropdown">
+          <button id="modelDropdownBtn" class="dropdown-btn">
+            <span id="currentModelDisplay">llava-llama3</span>
+            <svg class="dropdown-arrow" width="10" height="6" viewBox="0 0 10 6">
+              <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="2" fill="none" />
+            </svg>
+          </button>
+          <div class="dropdown-content">
+            <div id="modelList"></div>
+            <button id="addModelBtn" class="add-model-btn">
+              <svg width="16" height="16" viewBox="0 0 16 16">
+                <path d="M8 1V15M1 8H15" stroke="currentColor" stroke-width="2" />
+              </svg>
+              Add Model
+            </button>
+          </div>
         </div>
-        <div id="messages"></div>
-        <div id="input-area">
-            <label for="imageInput" id="imageInputLabel">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7m4 0h4v4m-4-4l5 5M9 15l2-2 4 4"/>
-                </svg>
-            </label>
-            <input type="file" id="imageInput" accept="image/*" />
-            <input type="text" id="promptInput" placeholder="Type your message..." />
-            <button id="sendBtn">Send</button>
-        </div>
+      </div>
+      <div id="messages"></div>
+      <div id="input-area">
+        <label for="imageInput" id="imageInputLabel">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7m4 0h4v4m-4-4l5 5M9 15l2-2 4 4"
+            />
+          </svg>
+        </label>
+        <input type="file" id="imageInput" accept="image/*" />
+        <input type="text" id="promptInput" placeholder="Type your message..." />
+        <button id="sendBtn">Send</button>
+      </div>
     </div>
     <script src="models.js"></script>
     <script src="app.js"></script>
-</body>
-
+  </body>
 </html>

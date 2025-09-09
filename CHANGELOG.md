@@ -8,4 +8,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial release of a polished repository structure including license, code of conduct, contributing guidelines, CI workflows, and more. 
+
+- Initial release of a polished repository structure including license, code of conduct, contributing guidelines, CI workflows, and more.

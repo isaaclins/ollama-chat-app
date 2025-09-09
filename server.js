@@ -35,10 +35,10 @@ app.get('/api/models', async (req, res) => {
 app.post('/api/models/pull', async (req, res) => {
   try {
     const { modelName } = req.body;
-    
+
     // Start the pull process
     const pullProcess = exec(`ollama pull ${modelName}`);
-    
+
     // Stream the output back to the client
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
@@ -54,7 +54,9 @@ app.post('/api/models/pull', async (req, res) => {
 
     pullProcess.on('close', (code) => {
       if (code === 0) {
-        res.write(`data: ${JSON.stringify({ type: 'complete', data: 'Model pulled successfully' })}\n\n`);
+        res.write(
+          `data: ${JSON.stringify({ type: 'complete', data: 'Model pulled successfully' })}\n\n`
+        );
       } else {
         res.write(`data: ${JSON.stringify({ type: 'error', data: 'Failed to pull model' })}\n\n`);
       }
@@ -73,7 +75,7 @@ app.get('/api/models/:name', async (req, res) => {
     const response = await fetch(`${OLLAMA_API}/api/show`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: modelName })
+      body: JSON.stringify({ name: modelName }),
     });
     const data = await response.json();
     res.json(data);
@@ -115,7 +117,7 @@ app.post('/api/chat', async (req, res) => {
           temperature: 0.7,
           top_k: 40,
           top_p: 0.9,
-        }
+        },
       }),
     });
 
@@ -131,9 +133,12 @@ app.post('/api/chat', async (req, res) => {
 
     // Stream the response line by line
     const responseStream = ollamaResponse.body;
-    responseStream.on('data', chunk => {
+    responseStream.on('data', (chunk) => {
       try {
-        const lines = chunk.toString().split('\n').filter(line => line.trim());
+        const lines = chunk
+          .toString()
+          .split('\n')
+          .filter((line) => line.trim());
         for (const line of lines) {
           const parsed = JSON.parse(line);
           if (parsed.message?.content) {
@@ -149,11 +154,10 @@ app.post('/api/chat', async (req, res) => {
       res.end();
     });
 
-    responseStream.on('error', error => {
+    responseStream.on('error', (error) => {
       console.error('Stream error:', error);
       res.status(500).json({ error: 'Stream error occurred' });
     });
-
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });

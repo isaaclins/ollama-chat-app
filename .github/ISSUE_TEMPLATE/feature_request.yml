@@ -1,4 +1,4 @@
-name: "Feature Request ✨"
+name: 'Feature Request ✨'
 about: Suggest an idea for this project
 labels: enhancement
 assignees: isaaclins
@@ -28,4 +28,4 @@ body:
     id: additional
     attributes:
       label: Additional context
-      description: Add any other context or screenshots about the feature request here. 
+      description: Add any other context or screenshots about the feature request here.

@@ -15,7 +15,11 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   background: var(--bg-color);
   color: var(--text-primary);
   line-height: 1.5;
@@ -30,7 +34,9 @@ body {
   margin: 2rem;
   background: var(--chat-bg);
   border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   height: calc(100vh - 4rem);
@@ -179,10 +185,20 @@ body.hide-think .think {
 }
 
 @keyframes dots {
-  0%, 20% { content: '.'; }
-  40% { content: '..'; }
-  60% { content: '...'; }
-  80%, 100% { content: ''; }
+  0%,
+  20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60% {
+    content: '...';
+  }
+  80%,
+  100% {
+    content: '';
+  }
 }
 
 @media (max-width: 640px) {
@@ -192,7 +208,7 @@ body.hide-think .think {
     width: 100%;
     border-radius: 0;
   }
-  
+
   .message {
     max-width: 90%;
   }
@@ -288,7 +304,9 @@ body.hide-think .think {
   width: 90%;
   max-width: 600px;
   border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .modal-header {
@@ -349,7 +367,8 @@ body.hide-think .think {
   gap: 0.5rem;
 }
 
-.use-model-btn, .delete-model-btn {
+.use-model-btn,
+.delete-model-btn {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 0.25rem;
@@ -476,9 +495,10 @@ body.hide-think .think {
 .progress-bar.indeterminate {
   width: 50%;
   animation: indeterminate 1.5s infinite linear;
-  background: linear-gradient(90deg, 
-    var(--primary-color) 0%, 
-    #93c5fd 50%, 
+  background: linear-gradient(
+    90deg,
+    var(--primary-color) 0%,
+    #93c5fd 50%,
     var(--primary-color) 100%
   );
 }
@@ -611,7 +631,9 @@ body.hide-think .think {
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   z-index: 1000;
   max-height: 300px;
   overflow-y: auto;

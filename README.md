@@ -94,6 +94,13 @@ npm run dev
 
 The dev server uses **nodemon** for automatic reload on file changes.
 
+## ☕ Support
+
+If this app saved you time, tips fund maintenance and releases:
+
+- [Buy Me a Coffee](https://buymeacoffee.com/isaaclins)
+- [isaaclins.com](https://isaaclins.com)
+
 ## 📄 License
 
 This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
